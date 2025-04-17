@@ -51,15 +51,6 @@ def aggregate_entropy_across_messages(binary_strings, window_size):
         for i in a:
             sa = ''.join(str(e) for e in i)
             e_list.append(sa)
-        # print(len(e_list))
-        # quit()
-        # aggregated_window = list(np.ravel(a))
-
-    
-
-
-
-        # Calculate entropy for this aggregated window
         entropy = calculate_entropy(e_list)
         entropy_list.append(entropy)
     return entropy_list

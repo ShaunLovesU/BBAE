@@ -3,8 +3,8 @@ from bit_to_hex import bit_list_to_hex
 from slidingWindow import aggregate_entropy_across_messages,find_significant_changes
 import matplotlib.pyplot as plt
 import numpy as np
-from PM import PM
-from etlv import ETLV
+# from PM import PM
+# from etlv import ETLV
 '''
 main code excution
 '''
@@ -65,7 +65,7 @@ def pad_to_byte_alignment(data):
 
 #     # Join the list back into a string
 #     original_data = ''.join(merged_list)
-    
+
 #     return original_data
 
 
@@ -131,6 +131,7 @@ def sig_change(list1, list2,threshold):
 
         # Collect both changes in a tuple
         if change1 >= threshold or change2 >= threshold:
+        # if change1 >= threshold :
             changes.append(i)
 
     return changes
@@ -139,16 +140,6 @@ def sig_change(list1, list2,threshold):
 
 
 def bit_congruence(seg1, seg2):
-    """
-    Calculate the bit congruence between two bytes.
-    Args:
-        seg1: A string of windowsize bits (e.g., '10101010').
-        seg2: A string of windowsize bits (e.g., '10101111').
-    
-    Returns:
-        The bit congruence (a value between 0 and 1).
-    """
-
     # Count how many bits are the same in both bytes
     c_agree = sum(b1 == b2 for b1, b2 in zip(seg1, seg2))
     
@@ -157,23 +148,11 @@ def bit_congruence(seg1, seg2):
     return bit_congruence_value
 
 def average_bit_congruence(messages, segment_start, segment_length):
-    """
-    Calculate the average bit congruence for the same segment across all messages.
-    Args:
-        messages: List of binary strings representing the messages.
-        segment_start: Starting position of the segment (0-indexed).
-        segment_length: Length of the segment to compare (e.g., 8 bits).
-    
-    Returns:
-        The average bit congruence for the segment across all messages.
-    """
-
     total_congruence = 0
     num_comparisons = 0
-
     # Compare each pair of segments using bit congruence
     for i in range(len(messages)):
-        for j in range(i + segment_length, len(messages)):
+        for j in range(i + 1, len(messages)):
             # Check if both messages are long enough for the segment
             if len(messages[i]) >= segment_start + segment_length and len(messages[j]) >= segment_start + segment_length:
                 segment1 = messages[i][segment_start:segment_start + segment_length]
@@ -209,9 +188,9 @@ def update_dic(input_list, credits_dict):
 def main():
     # file = '/Users/leijiezhang/Documents/CurrentResearch/binaryinferno/tcpRaw.txt'
     # file = '/Users/leijiezhang/Documents/CurrentResearch/tcpRaw_diversity.txt'
-    file = "/Users/leijiezhang/Documents/CurrentResearch/tcp_messages1.txt"
+    file = "/Users/leijiezhang/Desktop/BBAE/Data_txt/tcp_messages.txt"
     # TCP best so far
-    # file = '/Users/leijiezhang/Documents/CurrentResearch/mqttC-S/hive/First_Try_diversity.txt'
+    # file = '/Users/leijiezhang/Desktop/BBAE/Data_txt/First_Try_diversity.txt'
     # Above MQTT is the final test data
     raw_data = []
     with open(file) as file:
@@ -223,11 +202,11 @@ def main():
 
     # convert raw data into bit-oriented
     bit_data = hex_list_to_bit(raw_data)
-
-    packet_manager = PM()
-    etlv_instance = ETLV(bit_data, packet_manager, filter_rate=0.4)
-    print(etlv_instance)
-    quit()
+    #
+    # packet_manager = PM()
+    # etlv_instance = ETLV(bit_data, packet_manager, filter_rate=0.4)
+    # print(etlv_instance)
+    # quit()
     # res = min(len(ele) for ele in bit_data)
     
     # # printing result
@@ -236,7 +215,7 @@ def main():
 
     # calculate entropy for a fixed window of size 8
     eight_bit_window = aggregate_entropy_across_messages(bit_data,8)
-    # en_win8_header = eight_bit_window[:21] #uncomment for TCPHEADER
+    en_win8_header = eight_bit_window[:21] #uncomment for TCPHEADER
     
     # find significant changes when use window size 8
     # return a tuple, (a,b) the boundary shows in the middle of these two pos
@@ -247,15 +226,16 @@ def main():
     four_bit_window = aggregate_entropy_across_messages(bit_data,4)
     two_bit_window = aggregate_entropy_across_messages(bit_data,2)
     one_bit_window = aggregate_entropy_across_messages(bit_data,1)
-
-    # en_win4_header = four_bit_window[:41]#uncomment for TCPHEADER
-    # en_win2_header = two_bit_window[:81]#uncomment for TCPHEADER
-    # en_win1_header = one_bit_window[:161]#uncomment for TCPHEADER
-
-    en_win8_header = eight_bit_window[:3]
-    en_win4_header = four_bit_window[:5]
-    en_win2_header = two_bit_window[:9]
-    en_win1_header = one_bit_window[:17] #for mqtt
+    #
+    en_win4_header = four_bit_window[:41]#uncomment for TCPHEADER
+    en_win2_header = two_bit_window[:81]#uncomment for TCPHEADER
+    en_win1_header = one_bit_window[:161]#uncomment for TCPHEADER
+    # print(en_win2_header)
+    # quit()
+    # en_win8_header = eight_bit_window[:3]
+    # en_win4_header = four_bit_window[:5]
+    # en_win2_header = two_bit_window[:9]
+    # en_win1_header = one_bit_window[:17] #for mqtt
 
     
 
@@ -273,9 +253,9 @@ def main():
         average_con_8bit= average_bit_congruence(bit_data,start_pos,8)
         window_8.append(average_con_8bit)
         start_pos+=8
-    win8_header = window_8[:3] #uncomment for MQTTheader
-    # win8_header = window_8[:21]   #uncomment for TCPHEADER
-
+    # win8_header = window_8[:3] #uncomment for MQTTheader
+    win8_header = window_8[:21]   #uncomment for TCPHEADER
+    # print(win8_header)
 
     window_4 = []
     start_pos =0
@@ -283,8 +263,8 @@ def main():
         average_con_4bit= average_bit_congruence(bit_data,start_pos,4)
         window_4.append(average_con_4bit)
         start_pos+=4
-    win4_header = window_4[:5] #uncomment for MQTTheader
-    # win4_header = window_4[:41] #uncomment for TCPHEADER
+    # win4_header = window_4[:5] #uncomment for MQTTheader
+    win4_header = window_4[:41] #uncomment for TCPHEADER
     # print(window_4)
 
     window_2 = []
@@ -293,8 +273,8 @@ def main():
         average_con_2bit= average_bit_congruence(bit_data,start_pos,2)
         window_2.append(average_con_2bit)
         start_pos+=2
-    win2_header = window_2[:9] #uncomment for MQTTheader
-    # win2_header = window_2[:81] #uncomment for TCPHEADER
+    # win2_header = window_2[:9] #uncomment for MQTTheader
+    win2_header = window_2[:81] #uncomment for TCPHEADER
 
     window_1 = []
     start_pos =0
@@ -302,14 +282,18 @@ def main():
         average_con_1bit= average_bit_congruence(bit_data,start_pos,1)
         window_1.append(average_con_1bit)
         start_pos+=1
-    win1_header = window_1[:17] #uncomment for MQTTheader
-    # win1_header = window_1[:161] #uncomment for TCPHEADER
+    # win1_header = window_1[:17] #uncomment for MQTTheader
+    win1_header = window_1[:161] #uncomment for TCPHEADER
 
     threshold = 0.5
     win8_b= sig_change(win8_header,en_win8_header,threshold)
     win4_b = sig_change(win4_header,en_win4_header,threshold)
     win2_b= sig_change(win2_header,en_win2_header,threshold)
     win1_b = sig_change(win1_header,en_win1_header,threshold)
+    # print(win8_header)
+    # quit()
+    # print(win4_b)
+    # quit()
     print(win1_b)
 
     for i in range(len(win8_b)):
@@ -330,7 +314,8 @@ def main():
     
     credit_dict = {}
     initialize_dic(credit_dict,win8_b)
-
+    # print(win4_b)
+    # quit()
     # update the credit if the different window size verified the boundary
     update_dic(win4_b,credit_dict)
     update_dic(win2_b,credit_dict)
@@ -352,7 +337,7 @@ def main():
     check_list.sort()
     print(check_list)
     intervals = boundaries_to_intervals(check_list)
-    print(intervals)
+    # print(intervals)
     # intervals = [(0, 1), (2, 3), (4, 5), (6, 6), (7, 7), (8, 8), (9, 9),(10,14),(15,15)]
     # quit()
     # Split the bit data according to the intervals
@@ -361,9 +346,9 @@ def main():
         segment = split_bit_data(i, intervals)
         segments.append(segment)
     # print(segments[0])
-    print(segments[0])
+    # print(segments[0])
     padded_data = pad_to_byte_alignment(segments)
-    print(padded_data[0])
+    # print(padded_data[0])
 
     reseambled_data = []
     # Print the padded data
