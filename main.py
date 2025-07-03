@@ -186,12 +186,10 @@ def update_dic(input_list, credits_dict):
             credits_dict[i] = 0
 
 def main():
-    # file = '/Users/leijiezhang/Documents/CurrentResearch/binaryinferno/tcpRaw.txt'
-    # file = '/Users/leijiezhang/Documents/CurrentResearch/tcpRaw_diversity.txt'
-    file = "/Users/leijiezhang/Desktop/BBAE/Data_txt/tcp_messages.txt"
-    # TCP best so far
-    # file = '/Users/leijiezhang/Desktop/BBAE/Data_txt/First_Try_diversity.txt'
-    # Above MQTT is the final test data
+    # file = "tcp_messages.txt" Change to your dataset path
+    # TCP
+    # file = 'First_Try_diversity.txt' Change to your dataset path
+    #  MQTT
     raw_data = []
     with open(file) as file:
         # open raw data file, and store into a list line by line

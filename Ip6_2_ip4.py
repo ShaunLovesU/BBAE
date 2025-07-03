@@ -41,4 +41,3 @@ def process_pcap(input_file, output_file):
 # process_pcap("input.pcap", "output_ipv4_clean.pcap")
 
 
-process_pcap("/Users/leijiezhang/Documents/nemesys/input/output.pcap", "/Users/leijiezhang/Documents/nemesys/input/out_IP4.pcap")

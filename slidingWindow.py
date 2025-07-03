@@ -1,6 +1,5 @@
 '''
 This file is Sliding Window, use for detect the boundaries using the calculation of entropy.
-Made by Shawn Zhang(V00931372) from University of Victoria
 '''
 
 from collections import defaultdict

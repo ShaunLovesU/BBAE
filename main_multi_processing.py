@@ -126,8 +126,7 @@ def flatten_segments(padded_data):
     return [''.join(sublist) for sublist in padded_data]
 
 def main():
-    # file = "/Users/leijiezhang/Desktop/BBAE/Data_txt/tcp_messages.txt"
-    file = "/Users/leijiezhang/Desktop/BBAE/Data_txt/First_Try_diversity.txt"
+    # file = "tcp_messages.txt" Change to your dataset path
     with open(file) as f:
         raw_data = [line.strip() for line in f.readlines()]
 
@@ -135,7 +134,7 @@ def main():
     start_time = time.time()
     entropy_dict, congruence_dict = compute_entropy_and_congruence(bit_data, [8, 4, 2, 1])
 
-    protocol = 'MQTT'
+    protocol = 'TCP'
     entropy_dict, congruence_dict = slice_entropy_congruence(entropy_dict, congruence_dict, protocol)
     threshold = 0.5
     change_dict = {
